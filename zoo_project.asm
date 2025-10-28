@@ -81,7 +81,7 @@ section .data
         invalid_ID: db "ID is invalid, for staff enter pXXXXXXX, for badger enter bXXXXXX. X = uint",10,0
         dupe_ID: db "The ID entered already exists in the table! Please enter a unique ID",10,0
         
-        delete_success: db "Record succesfully deleted!",10,0
+        delete_success: db "Record successfully deleted!",10,0
         delete_not_found: db "Record not found." ,10,0
     
 section .bss
@@ -903,7 +903,7 @@ section .text
         
       .find_badger_loop:
         cmp rcx, r8
-        jge .empty_record_badger        
+        jge .badger_record_not_found        
         mov rax, rcx
         imul rax, BADGER_RECORD_SIZE
         lea r9, [badger_table + rax]
@@ -955,6 +955,10 @@ section .text
         mov rdi, badger_empty_records
         call print_string_new
         jmp .finish_delete
+      .badger_record_not_found:
+        mov rdi, delete_not_found
+        call print_string_new
+        jmp .finish_delete
               
       .finish_delete:
         ret
@@ -987,12 +991,25 @@ section .text
       .search_for_staff:    
         movzx r8, BYTE [staff_count]            ; R8 stores staff_count, checks whether 0 (empty)
         cmp r8, 0
-        je .staff_table_empty
-        
+        je .staff_table_empty               
+      .get_staff_ID_loop: ; check whether search for ID is correct
         mov rdi, staff_add_id
         call print_string_new
-        call read_string_new                    ; prompt for ID from user, str input in RAX and moved to RBX
-        mov rbx, rax
+        call read_string_new
+        mov rdi, rax                        ; string input into RDI
+        mov rdx, 0                          ; staff flag
+        call VALIDATE_ID
+        cmp rax, 1                          ; RAX = 1 if VALIDATE_ID returns ID is  valid
+        je .staff_id_valid
+        
+        ;invalid ID, reprompt
+        mov rdi, invalid_ID
+        call print_string_new
+        jmp .get_staff_ID_loop
+      .staff_id_valid: 
+        
+                     
+        mov rbx, rax                            ; move string ID input back into RBX
         
         xor rcx, rcx                            ; zero RCX to use as record_table[rcx]
       .search_for_staff_loop:
@@ -1029,10 +1046,20 @@ section .text
         movzx r8, WORD [badger_count]           ; R8 = badger_count of size 16bits
         cmp r8, 0
         je .badger_table_empty
-        
+      .get_badger_id:                           ; check whether ID is correct        
         mov rdi, badger_add_id
         call print_string_new
         call read_string_new
+        mov rdi, rax                            ; mov input ID string into RDI
+        mov rdx, 1                              ; flag 1 = badger
+        call VALIDATE_ID                        ; RDI 1st arg = ID, RDX 2nd arg = flag
+        cmp rax, 1
+        je .badger_id_valid
+        
+        mov rdi, invalid_ID
+        call print_string_new
+        jmp .get_badger_id
+      .badger_id_valid:        
         mov rbx, rax
         
         xor rcx, rcx
