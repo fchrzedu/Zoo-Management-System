@@ -1,4 +1,4 @@
-; Public GitHub Repo = https://github.com/fchrzedu/COMP6016-Malware-Analysis-Semester-1
+; Public GitHub Repo = https://github.com/fchrzedu/Zoo-Management-System
 ; History & commits available in private repo upon request
 ; This code is fully complete, but lacks input validation except checking dupe IDs, their lengths and elements
 ; It has some modularity :)
