@@ -1,0 +1,25 @@
+Badger record structure
+- Badger ID (unique) bXXXXXX (6 digit numer)    7 chars + nullTer = reserve 8 bytes
+- Name  maximum 64 chars    1byte per char = 64chars > + null terimator = 65 bytes
+- Home setting  (stripeville longest 11 bytes) + null = 12 bytes
+- Mass in kg (4 bytes
+- Number of stripes (0-255) = 1 byte 
+- Sex (M or F)  (1 byte) (0 = F 1 = M) bool?
+- Month of birth (whole numers i.e. 1 Jan 3 Mar) (1byte)
+- Year of birth (4 bytes)
+- Staff ID of assigned keeper
+
+Staff Record structure
+- Surname   max 64 chars (65 bytes)
+- First name    max 64 chars (65 bytes)
+- Staff ID pXXXXXXX (8 chars + null) = 9 bytes
+- Departament Longest Park Keeper = 10 chars + null = 11 chars (11 bytes)
+- Starting annual salary (£) (4 bytes)? 2^4 = 65536, reasonable salary>
+- year of joining   4 bytes
+- Email address name@jnz.co.uk. Max 64 chars (65 bytes)
+
+
+
+1. .bss used to allocate memory (have no dynamic allocation, only static)
+2. First implement needs to add badgers and users
+3. 
