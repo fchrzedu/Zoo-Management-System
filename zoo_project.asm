@@ -57,14 +57,14 @@ section .data
 ; ------------------------ MENU MESSAGES ------------------------
         ; messages which build the programs menu
         menu_welcome: db "=-=-=-=-=-=- ZOO MENU -=-=-=-=-=-= ---- ",10,0 ;10 used for newline
-        menu_add_user: db "[1] Add User",10,0
-        menu_delete_user: db "[2] Delete User",10,0
+        menu_add_user: db "[1] Add Staff",10,0
+        menu_delete_user: db "[2] Delete Staff",10,0
         menu_add_badger: db "[3] Add Badger",10,0          
         menu_delete_badger: db "[4] Delete Badger",10,0
-        menu_display_users: db "[5] Display all Users",10,0
+        menu_display_users: db "[5] Display all Staff",10,0
         menu_display_badgers: db "[6] Display all Badgers",10,0
         menu_search_badger: db "[7] Search for & display a Badger",10,0
-        menu_search_user: db "[8] Search for & display a User",10,0
+        menu_search_user: db "[8] Search for & display a member of Staff",10,0
         menu_exit: db "[0] Exit",10,0
         menu_user_choice: db "Please enter a choice as an integer> ",0        
         EXIT_MESSAGE: db "Exiting program.....", 10,0
@@ -973,6 +973,7 @@ section .text
         ; RBX = holds staff / badger ID
         ; RCX = index used in badger_table[rcx] / staff_table[rcx]
         ; RAX = temporary register for calculations
+        ; RSI = pointer to staff ID string after checking valid ID
         
         ;stack allign
         push RBX
@@ -996,7 +997,9 @@ section .text
         mov rdi, staff_add_id
         call print_string_new
         call read_string_new
-        mov rdi, rax                        ; string input into RDI
+        mov r10, rax
+        mov rdi, r10  ;                  string input into RDI
+                            
         mov rdx, 0                          ; staff flag
         call VALIDATE_ID
         cmp rax, 1                          ; RAX = 1 if VALIDATE_ID returns ID is  valid
@@ -1009,8 +1012,8 @@ section .text
       .staff_id_valid: 
         
                      
-        mov rbx, rax                            ; move string ID input back into RBX
-        
+        mov rbx, r10                         ; move string ID input back into RBX
+       
         xor rcx, rcx                            ; zero RCX to use as record_table[rcx]
       .search_for_staff_loop:
         cmp rcx, r8                             ; does index = staff_count. If we iterated through table and not found a match, record not found.
@@ -1050,7 +1053,8 @@ section .text
         mov rdi, badger_add_id
         call print_string_new
         call read_string_new
-        mov rdi, rax                            ; mov input ID string into RDI
+        mov r10, rax
+        mov rdi, r10                         ; mov input ID string into RDI
         mov rdx, 1                              ; flag 1 = badger
         call VALIDATE_ID                        ; RDI 1st arg = ID, RDX 2nd arg = flag
         cmp rax, 1
@@ -1060,7 +1064,7 @@ section .text
         call print_string_new
         jmp .get_badger_id
       .badger_id_valid:        
-        mov rbx, rax
+        mov rbx, r10
         
         xor rcx, rcx
       .search_for_badger_loop:
